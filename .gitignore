@@ -1,0 +1,9 @@
+# Gereksiz ağır dosyalar
+node_modules/
+dist/
+build/
+
+# GÜVENLİK (Bu dosyalar asla yüklenmemeli)
+backend/serviceAccountKey.json
+.env
+.DS_Store
