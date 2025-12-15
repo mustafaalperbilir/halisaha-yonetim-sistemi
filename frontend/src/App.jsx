@@ -1,14 +1,35 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // YENİ: Yönlendirme kütüphanesi
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'; // useLocation eklendi
 import { auth } from './firebase'; 
+import ReactGA from "react-ga4"; // Google Analytics kütüphanesi
+
+// Sayfalar
 import MatchHistory from './pages/MatchHistory';
 import Settings from './pages/Settings';
-
-// Sayfalarımızı çağırıyoruz
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Players from './pages/Players';      // Oyuncular Sayfası
-import CreateMatch from './pages/CreateMatch'; // Maç Oluşturma Sayfası
+import Players from './pages/Players';
+import CreateMatch from './pages/CreateMatch';
+
+// --- GOOGLE ANALYTICS AYARLARI ---
+// Buraya kendi G- kodunu yapıştır.
+const TRACKING_ID = "G-0S62SDRPJX"; 
+
+ReactGA.initialize(TRACKING_ID);
+
+// Sayfa geçişlerini takip eden özel bileşen (Hacker Yöntemi 🕵️‍♂️)
+// Router'ın içine koyacağız ki her link değişimini yakalasın.
+const AnalyticsTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Sayfa her değiştiğinde Google'a "Biri buraya girdi" diye sinyal çakıyoruz
+    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+    console.log("GA4 Sinyali Gönderildi:", location.pathname); // Konsoldan takip etmen için
+  }, [location]);
+
+  return null; // Ekranda bir şey göstermesine gerek yok, gizli çalışır.
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -27,16 +48,18 @@ function App() {
   }
 
   return (
-    // Router: Uygulamanın trafik polisi gibi davranır, sayfaları yönetir.
     <Router>
+      {/* Gizli Takipçiyi Router'ın içine yerleştirdik */}
+      <AnalyticsTracker />
+
       <Routes>
-        {/* 1. Ana Sayfa: Kullanıcı varsa Dashboard, yoksa Login açılır */}
+        {/* 1. Ana Sayfa */}
         <Route path="/" element={user ? <Dashboard user={user} /> : <Login />} />
         
-        {/* 2. Oyuncular Sayfası: Sadece kullanıcı giriş yapmışsa açılır */}
+        {/* 2. Oyuncular Sayfası */}
         <Route path="/players" element={user ? <Players /> : <Navigate to="/" />} />
 
-        {/* 3. Maç Oluşturma Sayfası: Sadece kullanıcı giriş yapmışsa açılır */}
+        {/* 3. Maç Oluşturma Sayfası */}
         <Route path="/create-match" element={user ? <CreateMatch /> : <Navigate to="/" />} />
 
         <Route path="/match-history" element={user ? <MatchHistory /> : <Navigate to="/" />} />
