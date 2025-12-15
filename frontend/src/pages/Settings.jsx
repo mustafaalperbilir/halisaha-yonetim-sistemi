@@ -14,7 +14,7 @@ const Settings = () => {
   // Sayfa açılınca mevcut ayarları çek
   useEffect(() => {
     if (user) {
-      axios.get(`http://localhost:5000/api/settings/${user.uid}`)
+      axios.get(`/api/settings/${user.uid}`)
         .then(res => {
           if (res.data.botToken) setBotToken(res.data.botToken);
           if (res.data.chatId) setChatId(res.data.chatId);
@@ -28,7 +28,7 @@ const Settings = () => {
     
     try {
       setLoading(true);
-      await axios.post(`http://localhost:5000/api/settings/${user.uid}`, {
+      await axios.post(`/api/settings/${user.uid}`, {
         telegramBotToken: botToken.trim(), // Boşlukları temizle
         telegramChatId: chatId.trim()
       });

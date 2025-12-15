@@ -21,7 +21,7 @@ const MatchHistory = () => {
   const fetchHistory = useCallback(async () => {
     if (!user) return;
     try {
-      const response = await axios.get(`http://localhost:5000/api/matches/${user.uid}`);
+      const response = await axios.get(`/api/matches/${user.uid}`);
       setMatches(response.data);
     } catch (error) {
       console.error("Geçmiş çekilemedi:", error);
@@ -38,7 +38,7 @@ const MatchHistory = () => {
     e.stopPropagation();
     if (!window.confirm("Silmek istediğine emin misin?")) return;
     try {
-      await axios.delete(`http://localhost:5000/api/matches/${matchId}?uid=${user.uid}`);
+      await axios.delete(`/api/matches/${matchId}?uid=${user.uid}`);
       fetchHistory();
     } catch  {
       alert("Silinemedi.");
@@ -59,7 +59,7 @@ const MatchHistory = () => {
 
   const saveEdit = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/matches/${editingMatch.id}`, {
+      await axios.put(`/api/matches/${editingMatch.id}`, {
         uid: user.uid,
         ...editForm,
         status: 'completed'
@@ -76,7 +76,7 @@ const MatchHistory = () => {
   const handleSendReport = async () => {
     try {
       setSendingTg(true);
-      await axios.post('http://localhost:5000/api/send-telegram', {
+      await axios.post('/api/send-telegram', {
         uid: user.uid,
         // Takım bilgileri mevcut maçtan geliyor
         teamA: editingMatch.teamA,

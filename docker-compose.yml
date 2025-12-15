@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # BACKEND SERVİSİ
+  backend:
+    build: ./backend
+    container_name: halisaha-backend
+    ports:
+      - "5000:5000"
+    # Firebase anahtarını içeri aktarıyoruz (Güvenlik için)
+    volumes:
+      - ./backend/serviceAccountKey.json:/app/serviceAccountKey.json
+    environment:
+      - PORT=5000
+    restart: always
+
+  # FRONTEND SERVİSİ
+  frontend:
+    build: ./frontend
+    container_name: halisaha-frontend
+    ports:
+      - "80:80" # Dışarıya 80 (HTTP) portunu açıyoruz
+    depends_on:
+      - backend # Backend açılmadan Frontend açılmasın
+    restart: always

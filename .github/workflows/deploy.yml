@@ -1,0 +1,33 @@
+name: Deploy to AWS 🚀
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodları Çek
+        uses: actions/checkout@v2
+
+      - name: Dosyaları Kopyala
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: "/home/ubuntu/halisaha-yonetim-sistemi"
+
+      - name: Docker'ı Başlat
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/ubuntu/halisaha-yonetim-sistemi
+            # Docker işlemlerini root yetkisiyle (sudo) yap
+            sudo docker compose down || true
+            sudo docker compose up -d --build
